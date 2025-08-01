@@ -75,4 +75,3 @@ Vicuna1.5-7B模型的Predictor权重已提供在`models/predictor/Vicuna_ours_pr
 python test/speed_example.py --base_model_path "/path/to/base/model" --ea_model_path "/path/to/ea/model" --save_path "/path/to/save/result.json"
 python test/generate_example.py --path1 result1.json --path2 result2.json
 ```
-
