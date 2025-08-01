@@ -1,0 +1,79 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This software may be used and distributed according to the terms of the GNU General Public License version 3.
+
+import json
+import os
+import sys
+import time
+from pathlib import Path
+from typing import Tuple, List
+
+import fire
+import torch
+from fairscale.nn.model_parallel.initialize import initialize_model_parallel
+import argparse
+
+from generation import Vicuna
+
+
+PROMPT_DICT = {
+    "prompt_input": (
+        "Below is an instruction that describes a task, paired with an input that provides further context. "
+        "Write a response that appropriately completes the request.\n\n"
+        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
+    ),
+    "prompt_no_input": (
+        "Below is an instruction that describes a task. "
+        "Write a response that appropriately completes the request.\n\n"
+        "### Instruction:\n{instruction}\n\n### Response:"
+    ),
+}
+
+
+instructs_examples = [
+    "Tell me about alpacas.",
+    "Tell me about the president of Mexico in 2019.",
+    "Tell me about the king of France in 2019.",
+    "List all Canadian provinces in alphabetical order.",
+    "Write a Python program that prints the first 10 Fibonacci numbers.",
+    "Write a program that prints the numbers from 1 to 100. But for multiples of three print 'Fizz' instead of the number and for the multiples of five print 'Buzz'. For numbers which are multiples of both three and five print 'FizzBuzz'.",  # noqa: E501
+    "Tell me five words that rhyme with 'shock'.",
+    "Translate the sentence 'I have no mouth but I must scream' into Spanish.",
+]
+
+
+def main(
+    llama_ckpt_dir: str,
+    dynamic_ckpt_dir: str,
+    model_args_path: str,
+    tokenizer_path: str,
+    temperature: float = 0.1,
+    top_p: float = 0.75,
+    max_seq_len: int = 512,
+    max_batch_size: int = 32,
+    instructs: List[str] = instructs_examples,
+):
+    generator = Vicuna.build(
+        vicuna_ckpt_dir=llama_ckpt_dir,
+        dynamic_ckpt_dir=dynamic_ckpt_dir,
+        model_args_path=model_args_path,
+        tokenizer_path=tokenizer_path,
+        max_seq_len=max_seq_len,
+        max_batch_size=max_batch_size,
+    )
+
+    prompts = [PROMPT_DICT["prompt_no_input"].format_map({"instruction": x, "input": ""}) for x in instructs]
+    prompts = prompts[:max_batch_size]
+
+    results = generator.text_completion(prompts, max_gen_len=max_seq_len, temperature=temperature, top_p=top_p)
+
+    for prompt, result in zip(prompts, results):
+        print(prompt)
+        print(f"> {result['generation']}")
+        print(f"> {result['actprobs']}")
+        print(f"> {result['tokens']}")
+        print("\n==================================\n")
+
+
+if __name__ == "__main__":
+    fire.Fire(main)
