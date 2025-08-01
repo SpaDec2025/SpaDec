@@ -65,7 +65,7 @@ bash train_eagle_deepspeed.sh
 
 ## Evaluation
 
-Vicuna1.5-7B模型的Predictor权重已提供在`models/predictor/Vicuna_ours_predictor/`中
+Vicuna1.5-7B模型所对应的Predictor权重已提供在`models/predictor/Vicuna_ours_predictor/`中
 
 在src/SpecDecoding/EAGLE/eagle/model/ea_model.py中设置has_predictor=False以及True可以指定是否使用Predictor模块
 
