@@ -5,10 +5,10 @@ def read_from_json(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             loaded_data = json.load(f)
-        print(f"成功读取文件：{filename}")
+        print(f"Success to read file：{filename}")
         return loaded_data
     except Exception as e:
-        print(f"读取文件失败：{str(e)}")
+        print(f"Fail to read file：{str(e)}")
         raise
 
 def main():

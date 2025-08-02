@@ -13,7 +13,7 @@ def ensure_directory_exists(file_path):
     directory = os.path.dirname(file_path)
     if directory and not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
-        print(f"创建目录: {directory}")
+        print(f"Create directory: {directory}")
 
 
 def write_to_json(data, filename):
@@ -21,9 +21,9 @@ def write_to_json(data, filename):
         ensure_directory_exists(filename)
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
-        print(f"成功写入文件：{filename}")
+        print(f"Success to write file：{filename}")
     except Exception as e:
-        print(f"写入文件失败：{str(e)}")
+        print(f"Fail to write file：{str(e)}")
         raise
 
 

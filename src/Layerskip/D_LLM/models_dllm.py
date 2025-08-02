@@ -13,7 +13,7 @@ def LLaMA2_7B_Dynamic(args, **kwargs):
     llama_model_path = args.llama_model_path
     llama_param_path = args.llama_param_path
 
-    checkpoint = torch.load(os.path.join(llama_model_path, "consolidated.00.pth"), map_location="cpu") # 加载模型
+    checkpoint = torch.load(os.path.join(llama_model_path, "consolidated.00.pth"), map_location="cpu")
 
     with open(llama_param_path, "r") as f:
         params = json.load(f)

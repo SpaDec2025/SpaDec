@@ -1,6 +1,10 @@
 # SpaDec
 
-## 环境配置
+<p align="center">
+  <img src="./figs/SpeedResult.jpg" alt="benchmark" width="790">
+</p>
+
+## Environment Setup
 ```shell
 pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
@@ -8,26 +12,26 @@ pip install -r requirements.txt
 
 ## D-LLM
 
-可参考D-LLM(D-LLM: A Token Adaptive Computing Resource Allocation Strategy for Large Language Models)的README，在此列出关键步骤
+Refer to the README of D-LLM (D-LLM: A Token Adaptive Computing Resource Allocation Strategy for Large Language Models) for details. Key steps are listed below.
 
-### 训练
+### Training
 
 ```bash
 cd src/LayerSkip/D_LLM/
 bash finetuning_vicuna.sh
 ```
 
-### 保存模型
+### Saving the Model
 
-1. 将最后的lora checkpoint复制到模型根目录下
+1. Copy the final LoRA checkpoint to the model root directory
 2. `bash vicuna/inference_vicuna.sh`
-3. 按照Vicuna-7b-dllm-temp的格式组织：
+3. Organize in the format of Vicuna-7b-dllm-temp:
    1. `mv ./consolidated.00.pth /spadec/models/d-llm/Vicuna-7b-dllm-temp/`
    2. `cp /home/models/vicuna-7b-v1.5/tokenizer.model /spadec/models/d-llm/Vicuna-7b-dllm-temp/`
    3. `cp $OUTPUT_PATH$/model_args.json /spadec/models/d-llm/Vicuna-7b-dllm-temp/`
    4. `cp $OUTPUT_PATH$/params.json /spadec/models/d-llm/Vicuna-7b-dllm-temp/`
 
-### 将D-LLM模型转换为huggingface格式：
+### Convert D-LLM Model to Hugging Face Format
 
 ```bash
 python llama_hf/convert_llama_dllm_weights_to_hf.py \
@@ -35,29 +39,29 @@ python llama_hf/convert_llama_dllm_weights_to_hf.py \
     --model_size 7B \
     --output_dir /spadec/models/d-llm/Vicuna-7b-dllm-temp-hf \
     --llama_version 2
-# 手动删除tmp文件夹
+# Manually delete the tmp folder
 ```
 
-为了适配Multi-token robust router，在src/LayerSkip/D_LLM/vicuna/model_train.py和src/LayerSkip/D_LLM/model.py中取消掉关于`x = self.asymmetric_quantization_for_similarity(x, quant_bits=4)`的注释
+To adapt to the Multi-token robust router, uncomment the lines about `x = self.asymmetric_quantization_for_similarity(x, quant_bits=4)` in `src/LayerSkip/D_LLM/vicuna/model_train.py` and `src/LayerSkip/D_LLM/model.py`.
 
 ## EAGLE
 
-可参考EAGLE(EAGLE-2: Faster Inference of Language Models with Dynamic Draft Trees)的README，在此列出关键步骤
+Refer to the README of EAGLE (EAGLE-2: Faster Inference of Language Models with Dynamic Draft Trees) for details. Key steps are listed below.
 
-### 生成训练数据
+### Generate Training Data
 
 ```bash
 python -m eagle.ge_data.allocation --outdir [path of data]
 ```
 
-### 训练EAGLE Head
+### Train EAGLE Head
 
 ```bash
 accelerate launch -m --mixed_precision=bf16 eagle.train.main --tmpdir [path of data]\
 --cpdir [path of checkpoints] --configpath [path of config file]
 ```
 
-或者使用deepspeed：
+Alternatively using DeepSpeed:
 
 ```bash
 bash train_eagle_deepspeed.sh
@@ -65,11 +69,11 @@ bash train_eagle_deepspeed.sh
 
 ## Evaluation
 
-Vicuna1.5-7B模型所对应的Predictor权重已提供在`models/predictor/Vicuna_ours_predictor/`中
+Predictor weights for the Vicuna1.5-7B model are provided in `models/predictor/Vicuna_ours_predictor/`.
 
-在src/SpecDecoding/EAGLE/eagle/model/ea_model.py中设置has_predictor=False以及True可以指定是否使用Predictor模块
+In `src/SpecDecoding/EAGLE/eagle/model/ea_model.py`, set `has_predictor=False` or `True` to specify whether to use the Predictor module.
 
-运行测试：
+Run tests:
 
 ```bash
 python test/speed_example.py --base_model_path "/path/to/base/model" --ea_model_path "/path/to/ea/model" --save_path "/path/to/save/result.json"
