@@ -29,7 +29,7 @@ Here is some examples of the token responses of the baseline methods and SpaDec 
 
 ## Training Dataset of Predictor
 
-We put the training dataset of Predictor in `/datasets/predictor/merged_data_clean_final.ckpt`
+We placed the training dataset for the Predictor in `/datasets/predictor/merged_data_clean_final.ckpt`
 
 ## Environment Setup
 
