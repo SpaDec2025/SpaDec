@@ -13,7 +13,7 @@ Below is the speedup ratios comparison between SpaDec and existing speculative d
 
 ### The Overall Architecture of Our SpaDec
 
-Here is the architecture of our SpaDec. We first draft in one shot the tokens $𝑡_𝑗$ to $𝑡_{𝑗+𝛾}$. The sequence to be verified then goes through a Pre-verification module: we run the tokens through the first 𝑘 layers to build a small candidate tree, prune low-probability branches with a lightweight predictor, and flatten the surviving branches into a 1-D sequence. Next, in the Verification module, starting at layer 𝑘 we perform layer-wise progressive, layer-skippable lightweight checks over the drafted tokens, pushing only uncertain cases to deeper layers. Finally, we commit the accepted contiguous span of tokens as the output sequence.
+Here is the architecture of our SpaDec.
 
 <p align="center">
   <img src="./figs/SpaDecOverview.png" alt="benchmark" width="790">
@@ -26,6 +26,10 @@ Here is some examples of the token responses of the baseline methods and SpaDec 
 <p align="center">
   <img src="./figs/TokenCase.jpg" alt="benchmark" width="790">
 </p>
+
+## Training Dataset of Predictor
+
+We put the training dataset of Predictor in `/datasets/predictor/merged_data_clean_final.ckpt`
 
 ## Environment Setup
 
