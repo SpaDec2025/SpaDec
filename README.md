@@ -24,7 +24,7 @@ Here is the architecture of our SpaDec.
 Here is some examples of the token responses of the baseline methods and SpaDec to different questions. Our SpaDec attains similar response quality while demonstrating superior speed and memory efficiency.
 
 <p align="center">
-  <img src="./figs/TokenCase.jpg" alt="benchmark" width="790">
+  <img src="./figs/Token_case_9.png" alt="benchmark" width="790">
 </p>
 
 ## Training Dataset of Predictor
